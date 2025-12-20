@@ -4,6 +4,7 @@ FROM eclipse-temurin:21-jdk
 RUN apt-get update && apt-get install -y \
     wget \
     unzip \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Gradle
