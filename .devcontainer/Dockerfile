@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Gradle
-ARG GRADLE_VERSION=8.5
+ARG GRADLE_VERSION=9.2.0
 ARG GRADLE_HOME=/opt/gradle
 
 RUN wget -q https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip \

@@ -4,7 +4,7 @@
 		"dockerfile": "Dockerfile"
 	},
 	
-	"postCreateCommand": "if [ ! -f gradlew ]; then gradle wrapper --gradle-version 8.5; fi",
+	"postCreateCommand": "if [ ! -f gradlew ]; then gradle wrapper --gradle-version 9.2.0 || true; fi",
 	
 	"customizations": {
 		"vscode": {
