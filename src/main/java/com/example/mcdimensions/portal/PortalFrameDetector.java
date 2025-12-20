@@ -23,7 +23,7 @@ public class PortalFrameDetector {
     private static final int MAX_PORTAL_SIZE = 21;
 
     public static void checkAndCreatePortal(World world, BlockPos pos, BlockState placedBlock) {
-        if (world.isClient) {
+        if (world.isClient()) {
             return;
         }
 
@@ -194,7 +194,7 @@ public class PortalFrameDetector {
         return block == frameType.frameBlock;
     }
 
-    private static void createPortal(World world, PortalFrame frame, RegistryKey<net.minecraft.world.dimension.Dimension> targetDimension) {
+    private static void createPortal(World world, PortalFrame frame, RegistryKey<net.minecraft.world.World> targetDimension) {
         Direction right = frame.right;
         Direction up = frame.up;
         
@@ -224,7 +224,7 @@ public class PortalFrameDetector {
         };
     }
     
-    public static RegistryKey<net.minecraft.world.dimension.Dimension> getTargetDimensionForPortal(World world, BlockPos portalPos) {
+    public static RegistryKey<net.minecraft.world.World> getTargetDimensionForPortal(World world, BlockPos portalPos) {
         // Check adjacent blocks to determine frame type
         for (Direction dir : Direction.values()) {
             BlockPos framePos = portalPos.offset(dir);
@@ -253,10 +253,10 @@ public class PortalFrameDetector {
     }
 
     private static class FrameType {
-        final RegistryKey<net.minecraft.world.dimension.Dimension> targetDimension;
+        final RegistryKey<net.minecraft.world.World> targetDimension;
         final Block frameBlock;
 
-        FrameType(RegistryKey<net.minecraft.world.dimension.Dimension> targetDimension, Block frameBlock) {
+        FrameType(RegistryKey<net.minecraft.world.World> targetDimension, Block frameBlock) {
             this.targetDimension = targetDimension;
             this.frameBlock = frameBlock;
         }

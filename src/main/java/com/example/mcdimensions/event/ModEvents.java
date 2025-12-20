@@ -40,7 +40,7 @@ public class ModEvents {
     }
     
     public static void schedulePortalCheck(World world, BlockPos pos) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             blocksToCheck.add(pos.toImmutable());
         }
     }

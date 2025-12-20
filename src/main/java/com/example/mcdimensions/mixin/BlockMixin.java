@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class BlockMixin {
     @Inject(method = "onBlockAdded", at = @At("TAIL"))
     private void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify, CallbackInfo ci) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             // Schedule portal check for this block and adjacent blocks
             ModEvents.schedulePortalCheck(world, pos);
             for (net.minecraft.util.math.Direction dir : net.minecraft.util.math.Direction.values()) {

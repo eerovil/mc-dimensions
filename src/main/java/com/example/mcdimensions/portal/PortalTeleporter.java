@@ -15,15 +15,15 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionTypes;
 
 public class PortalTeleporter {
-    public static void teleportEntity(Entity entity, BlockPos portalPos) {
-        if (!(entity.getWorld() instanceof ServerWorld)) {
+    public static void teleportEntity(Entity entity, World world, BlockPos portalPos) {
+        if (!(world instanceof ServerWorld)) {
             return;
         }
 
-        ServerWorld currentWorld = (ServerWorld) entity.getWorld();
+        ServerWorld currentWorld = (ServerWorld) world;
         
         // Determine target dimension based on portal frame type
-        RegistryKey<net.minecraft.world.dimension.Dimension> targetDimension = 
+        RegistryKey<net.minecraft.world.World> targetDimension = 
                 PortalFrameDetector.getTargetDimensionForPortal(currentWorld, portalPos);
         
         if (targetDimension == null) {
@@ -41,13 +41,16 @@ public class PortalTeleporter {
         
         // Teleport entity
         TeleportTarget teleportTarget = new TeleportTarget(
+                targetWorld,
                 Vec3d.ofCenter(targetPos),
                 Vec3d.ZERO,
                 entity.getYaw(),
-                entity.getPitch()
+                entity.getPitch(),
+                net.minecraft.world.PositionFlag.DEFAULT,
+                net.minecraft.world.PostDimensionTransition.UNKNOWN
         );
         
-        entity.teleportTo(targetWorld, teleportTarget);
+        entity.teleportTo(teleportTarget);
     }
 
     private static BlockPos findSafeSpawnPosition(ServerWorld world, BlockPos referencePos) {

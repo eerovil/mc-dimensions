@@ -1,10 +1,15 @@
 package com.example.mcdimensions.worldgen.chunk;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-public class StartChunkGeneratorConfig implements ChunkGeneratorSettings {
-    public static final Codec<StartChunkGeneratorConfig> CODEC = Codec.unit(StartChunkGeneratorConfig::new);
+public class StartChunkGeneratorConfig {
+    public static final StartChunkGeneratorConfig INSTANCE = new StartChunkGeneratorConfig();
+    public static final Codec<StartChunkGeneratorConfig> CODEC = RecordCodecBuilder.create(instance -> 
+        instance.group(
+            Codec.BOOL.optionalFieldOf("dummy", false).forGetter(config -> false)
+        ).apply(instance, ignored -> INSTANCE)
+    );
 }
 
 

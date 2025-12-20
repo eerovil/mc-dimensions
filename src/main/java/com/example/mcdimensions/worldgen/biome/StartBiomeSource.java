@@ -1,9 +1,10 @@
 package com.example.mcdimensions.worldgen.biome;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.example.mcdimensions.McDimensions;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
@@ -11,14 +12,13 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 public class StartBiomeSource extends BiomeSource {
     public static final MapCodec<StartBiomeSource> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
-                    Codec.unit(StartBiomeSourceConfig.INSTANCE)
-            ).apply(instance, instance.stable(StartBiomeSource::new))
+                    StartBiomeSourceConfig.CODEC.fieldOf("config").forGetter(source -> StartBiomeSourceConfig.INSTANCE)
+            ).apply(instance, config -> new StartBiomeSource(StartBiomeSourceConfig.INSTANCE))
     );
     
     private static final RegistryKey<Biome> START_BIOME = RegistryKey.of(
@@ -27,22 +27,22 @@ public class StartBiomeSource extends BiomeSource {
     );
 
     public StartBiomeSource(StartBiomeSourceConfig config) {
-        super(List.of());
+        super();
     }
 
     @Override
-    protected Codec<? extends BiomeSource> getCodec() {
-        return CODEC.codec();
+    protected MapCodec<? extends BiomeSource> getCodec() {
+        return CODEC;
     }
 
     @Override
-    protected Stream<RegistryKey<Biome>> getBiomes() {
+    public Stream<RegistryKey<Biome>> getBiomes() {
         return Stream.of(START_BIOME);
     }
 
     @Override
-    public RegistryKey<Biome> getBiome(int x, int y, int z, MultiNoiseUtil.MultiNoiseSampler noise) {
-        return START_BIOME;
+    public RegistryEntry<Biome> getBiome(int x, int y, int z, MultiNoiseUtil.MultiNoiseSampler noise, RegistryEntryLookup<Biome> biomeLookup) {
+        return biomeLookup.getOrThrow(START_BIOME);
     }
 }
 

@@ -25,18 +25,18 @@ public class ModDimensions {
             Identifier.of(McDimensions.MOD_ID, "stone")
     );
 
-    public static final RegistryKey<net.minecraft.world.dimension.Dimension> START_DIMENSION = RegistryKey.of(
-            RegistryKeys.DIMENSION,
+    public static final RegistryKey<net.minecraft.world.World> START_DIMENSION = RegistryKey.of(
+            RegistryKeys.WORLD,
             Identifier.of(McDimensions.MOD_ID, "start")
     );
     
-    public static final RegistryKey<net.minecraft.world.dimension.Dimension> FOREST_DIMENSION = RegistryKey.of(
-            RegistryKeys.DIMENSION,
+    public static final RegistryKey<net.minecraft.world.World> FOREST_DIMENSION = RegistryKey.of(
+            RegistryKeys.WORLD,
             Identifier.of(McDimensions.MOD_ID, "forest")
     );
     
-    public static final RegistryKey<net.minecraft.world.dimension.Dimension> STONE_DIMENSION = RegistryKey.of(
-            RegistryKeys.DIMENSION,
+    public static final RegistryKey<net.minecraft.world.World> STONE_DIMENSION = RegistryKey.of(
+            RegistryKeys.WORLD,
             Identifier.of(McDimensions.MOD_ID, "stone")
     );
 

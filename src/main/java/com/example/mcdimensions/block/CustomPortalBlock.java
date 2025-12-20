@@ -29,14 +29,14 @@ public class CustomPortalBlock extends Block {
 
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        if (!world.isClient && !entity.hasVehicle() && !entity.hasPassengers() && entity.canUsePortals(false)) {
-            PortalTeleporter.teleportEntity(entity, pos);
+        if (!world.isClient() && !entity.hasVehicle() && !entity.hasPassengers() && entity.canUsePortals(false)) {
+            PortalTeleporter.teleportEntity(entity, world, pos);
         }
     }
 
     @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             // Check if portal frame is still valid
             if (!PortalFrameDetector.isValidPortalFrame(world, pos)) {
                 world.removeBlock(pos, false);

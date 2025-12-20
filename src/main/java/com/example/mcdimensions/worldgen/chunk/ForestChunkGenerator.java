@@ -29,8 +29,8 @@ public class ForestChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    protected Codec<? extends ChunkGenerator> getCodec() {
-        return CODEC.codec();
+    protected MapCodec<? extends ChunkGenerator> getCodec() {
+        return CODEC;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ForestChunkGenerator extends ChunkGenerator {
     public void generateTerrain(ChunkRegion region, StructureAccessor structures, Chunk chunk) {
         BlockPos.Mutable mutable = new BlockPos.Mutable();
         int minY = region.getBottomY();
-        int maxY = region.getTopY();
+        int maxY = 320; // Max build height
         
         // Generate terrain with dirt and grass
         for (int x = 0; x < 16; x++) {
@@ -53,9 +53,9 @@ public class ForestChunkGenerator extends ChunkGenerator {
                 for (int y = minY; y <= surfaceHeight; y++) {
                     mutable.set(x, y, z);
                     if (y == surfaceHeight) {
-                        chunk.setBlockState(mutable, Blocks.GRASS_BLOCK.getDefaultState(), false);
+                        chunk.setBlockState(mutable, Blocks.GRASS_BLOCK.getDefaultState(), 0);
                     } else {
-                        chunk.setBlockState(mutable, Blocks.DIRT.getDefaultState(), false);
+                        chunk.setBlockState(mutable, Blocks.DIRT.getDefaultState(), 0);
                     }
                 }
             }
@@ -63,13 +63,23 @@ public class ForestChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public int getHeight(int x, int z, Heightmap.Type heightmap, HeightLimitView world) {
+    public int getHeight(int x, int z, Heightmap.Type heightmap, HeightLimitView world, net.minecraft.world.gen.chunk.NoiseConfig noiseConfig) {
         return 64 + (int)(Math.sin(x * 0.1) * 3) + (int)(Math.cos(z * 0.1) * 3);
     }
 
     @Override
     public void populateEntities(ChunkRegion region) {
         // No entities
+    }
+
+    @Override
+    public void appendDebugHudText(java.util.List<String> text, net.minecraft.world.gen.chunk.NoiseConfig noiseConfig, BlockPos pos) {
+        // No debug info
+    }
+
+    @Override
+    public net.minecraft.world.gen.chunk.NoiseColumn getColumnSample(int x, int z, HeightLimitView heightLimitView, net.minecraft.world.gen.chunk.NoiseConfig noiseConfig) {
+        return new net.minecraft.world.gen.chunk.NoiseColumn(heightLimitView.getBottomY(), new net.minecraft.block.BlockState[0]);
     }
 }
 
