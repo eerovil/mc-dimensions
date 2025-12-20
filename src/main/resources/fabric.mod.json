@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "mc-dimensions",
+  "version": "${version}",
+  "name": "MC Dimensions",
+  "description": "A progression-based dimension mod with custom portals",
+  "authors": [
+    "YourName"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+  "license": "MIT",
+  "icon": "assets/mc-dimensions/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.example.mcdimensions.McDimensions"
+    ]
+  },
+  "mixins": [
+    "mc-dimensions.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric-api": "*",
+    "minecraft": "~1.21.1",
+    "java": ">=21"
+  }
+}
+

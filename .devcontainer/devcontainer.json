@@ -1,0 +1,44 @@
+{
+	"name": "Minecraft Fabric Mod Dev",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	
+	"postCreateCommand": "if [ ! -f gradlew ]; then gradle wrapper --gradle-version 8.5; fi",
+	
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"vscjava.vscode-gradle",
+				"redhat.java",
+				"vscjava.vscode-java-debug",
+				"vscjava.vscode-java-test",
+				"vscjava.vscode-java-dependency"
+			],
+			"settings": {
+				"java.home": "/usr/local/openjdk-21",
+				"java.configuration.runtimes": [
+					{
+						"name": "JavaSE-21",
+						"path": "/usr/local/openjdk-21",
+						"default": true
+					}
+				],
+				"java.compile.nullAnalysis.mode": "automatic",
+				"files.exclude": {
+					"**/.gradle": true,
+					"**/build": true,
+					"**/.classpath": true,
+					"**/.project": true,
+					"**/.settings": true
+				},
+				"files.watcherExclude": {
+					"**/.gradle/**": true,
+					"**/build/**": true
+				}
+			}
+		}
+	}
+}
+

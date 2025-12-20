@@ -1,0 +1,36 @@
+# Gradle
+.gradle/
+build/
+!build/resources/main
+!build/resources/clientMain
+!build/resources/serverMain
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# Mac
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Minecraft
+run/
+*.jar
+!gradle-wrapper.jar
+
+

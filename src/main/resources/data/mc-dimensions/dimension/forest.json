@@ -1,0 +1,11 @@
+{
+  "type": "mc-dimensions:forest",
+  "generator": {
+    "type": "mc-dimensions:forest_chunk_generator",
+    "biome_source": {
+      "type": "mc-dimensions:forest_biome_source"
+    }
+  }
+}
+
+
