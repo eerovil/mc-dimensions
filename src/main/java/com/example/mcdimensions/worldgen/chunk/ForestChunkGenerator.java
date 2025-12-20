@@ -34,11 +34,14 @@ public class ForestChunkGenerator extends ChunkGenerator {
     }
 
     @Override
+    public int getMinimumY() {
+        return -64;
+    }
+
     public void buildSurface(ChunkRegion region, StructureAccessor structures, Chunk chunk) {
         // Surface is already dirt/grass from generateTerrain
     }
 
-    @Override
     public void generateTerrain(ChunkRegion region, StructureAccessor structures, Chunk chunk) {
         BlockPos.Mutable mutable = new BlockPos.Mutable();
         int minY = region.getBottomY();
@@ -62,8 +65,7 @@ public class ForestChunkGenerator extends ChunkGenerator {
         }
     }
 
-    @Override
-    public int getHeight(int x, int z, Heightmap.Type heightmap, HeightLimitView world, net.minecraft.world.gen.chunk.NoiseConfig noiseConfig) {
+    public int getHeight(int x, int z, Heightmap.Type heightmap, HeightLimitView world, Object noiseConfig) {
         return 64 + (int)(Math.sin(x * 0.1) * 3) + (int)(Math.cos(z * 0.1) * 3);
     }
 
@@ -73,14 +75,15 @@ public class ForestChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void appendDebugHudText(java.util.List<String> text, net.minecraft.world.gen.chunk.NoiseConfig noiseConfig, BlockPos pos) {
+    public void appendDebugHudText(java.util.List<String> text, Object noiseConfig, BlockPos pos) {
         // No debug info
     }
 
     @Override
-    public net.minecraft.world.gen.chunk.NoiseColumn getColumnSample(int x, int z, HeightLimitView heightLimitView, net.minecraft.world.gen.chunk.NoiseConfig noiseConfig) {
-        return new net.minecraft.world.gen.chunk.NoiseColumn(heightLimitView.getBottomY(), new net.minecraft.block.BlockState[0]);
+    public Object getColumnSample(int x, int z, HeightLimitView heightLimitView, Object noiseConfig) {
+        return null; // Placeholder - will need proper implementation
     }
 }
+
 
 

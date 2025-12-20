@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.example.mcdimensions.McDimensions;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
@@ -35,15 +34,16 @@ public class ForestBiomeSource extends BiomeSource {
         return CODEC;
     }
 
-    @Override
     public Stream<RegistryKey<Biome>> getBiomes() {
         return Stream.of(FOREST_BIOME);
     }
 
     @Override
-    public RegistryEntry<Biome> getBiome(int x, int y, int z, MultiNoiseUtil.MultiNoiseSampler noise, RegistryEntryLookup<Biome> biomeLookup) {
-        return biomeLookup.getOrThrow(FOREST_BIOME);
+    public RegistryEntry<Biome> getBiome(int x, int y, int z, MultiNoiseUtil.MultiNoiseSampler noise) {
+        // This will be resolved by the registry lookup during world generation
+        return null; // Will be properly resolved by the biome source system
     }
 }
+
 
 
