@@ -22,11 +22,83 @@
   "carvers": {},
   "features": [
     [
-      "minecraft:forest_rock",
-      "minecraft:trees_plains"
+      "minecraft:forest_flower",
+      "minecraft:forest_grass",
+      "minecraft:default_vegetation",
+      "minecraft:forest_flowers"
+    ],
+    [
+      "minecraft:patch_grass_forest",
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal",
+      "minecraft:patch_sugar_cane",
+      "minecraft:patch_pumpkin"
+    ],
+    [
+      "minecraft:spring_water",
+      "minecraft:spring_lava"
+    ],
+    [
+      "minecraft:patch_berry_common"
+    ],
+    [
+      "minecraft:patch_berry_rare"
+    ],
+    [
+      "minecraft:flower_default",
+      "minecraft:patch_grass_taiga_2",
+      "minecraft:brown_mushroom_taiga",
+      "minecraft:red_mushroom_taiga"
+    ],
+    [
+      "minecraft:patch_dead_bush_2",
+      "minecraft:patch_grass_taiga",
+      "minecraft:flower_forest",
+      "minecraft:flower_default_extra"
+    ],
+    [
+      "minecraft:patch_grass_forest",
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal",
+      "minecraft:patch_sugar_cane",
+      "minecraft:patch_pumpkin"
+    ],
+    [
+      "minecraft:spring_water",
+      "minecraft:spring_lava"
+    ],
+    [
+      "minecraft:patch_berry_common"
+    ],
+    [
+      "minecraft:patch_berry_rare"
+    ],
+    [
+      "minecraft:flower_default",
+      "minecraft:patch_grass_taiga_2",
+      "minecraft:brown_mushroom_taiga",
+      "minecraft:red_mushroom_taiga"
+    ],
+    [
+      "minecraft:patch_dead_bush_2",
+      "minecraft:patch_grass_taiga",
+      "minecraft:flower_forest",
+      "minecraft:flower_default_extra"
     ]
-  ]
+  ],
+  "surface_builder": {
+    "config": {
+      "top_material": {
+        "Name": "minecraft:grass_block"
+      },
+      "under_material": {
+        "Name": "minecraft:dirt"
+      },
+      "underwater_material": {
+        "Name": "minecraft:dirt"
+      }
+    },
+    "type": "minecraft:default"
+  }
 }
-
-
 

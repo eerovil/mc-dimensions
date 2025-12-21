@@ -1,7 +1,7 @@
 {
   "temperature": 0.5,
   "downfall": 0.5,
-  "has_precipitation": false,
+  "has_precipitation": true,
   "effects": {
     "sky_color": 7972607,
     "fog_color": 12638463,
@@ -20,8 +20,20 @@
   },
   "spawn_costs": {},
   "carvers": {},
-  "features": []
+  "features": [],
+  "surface_builder": {
+    "config": {
+      "top_material": {
+        "Name": "minecraft:dirt"
+      },
+      "under_material": {
+        "Name": "minecraft:dirt"
+      },
+      "underwater_material": {
+        "Name": "minecraft:dirt"
+      }
+    },
+    "type": "minecraft:default"
+  }
 }
-
-
 

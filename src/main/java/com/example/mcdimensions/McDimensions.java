@@ -15,9 +15,16 @@ public class McDimensions implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Initializing MC Dimensions mod");
         
-        ModDimensions.register();
+        // Register blocks first
         ModBlocks.register();
+        
+        // Register dimensions and world generation
+        ModDimensions.register();
+        
+        // Register events
         ModEvents.register();
+        
+        LOGGER.info("MC Dimensions mod initialized");
     }
 }
 

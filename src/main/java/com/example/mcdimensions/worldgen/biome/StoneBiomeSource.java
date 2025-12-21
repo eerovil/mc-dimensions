@@ -6,11 +6,13 @@ import com.example.mcdimensions.McDimensions;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class StoneBiomeSource extends BiomeSource {
@@ -24,9 +26,17 @@ public class StoneBiomeSource extends BiomeSource {
             RegistryKeys.BIOME,
             Identifier.of(McDimensions.MOD_ID, "stone_biome")
     );
+    
+    private final RegistryEntry<Biome> biomeEntry;
 
     public StoneBiomeSource(StoneBiomeSourceConfig config) {
         super();
+        this.biomeEntry = null;
+    }
+    
+    public StoneBiomeSource(RegistryEntry<Biome> biomeEntry) {
+        super();
+        this.biomeEntry = biomeEntry;
     }
 
     @Override
@@ -34,14 +44,19 @@ public class StoneBiomeSource extends BiomeSource {
         return CODEC;
     }
 
-    public Stream<RegistryKey<Biome>> getBiomes() {
-        return Stream.of(STONE_BIOME);
+    @Override
+    public Stream<RegistryEntry<Biome>> biomeStream() {
+        return biomeEntry != null ? Stream.of(biomeEntry) : Stream.empty();
+    }
+
+    @Override
+    public Set<RegistryEntry<Biome>> getBiomes() {
+        return biomeEntry != null ? Set.of(biomeEntry) : Set.of();
     }
 
     @Override
     public RegistryEntry<Biome> getBiome(int x, int y, int z, MultiNoiseUtil.MultiNoiseSampler noise) {
-        // This will be resolved by the registry lookup during world generation
-        return null; // Will be properly resolved by the biome source system
+        return biomeEntry;
     }
 }
 

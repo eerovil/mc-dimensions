@@ -3,10 +3,9 @@
   "generator": {
     "type": "mc-dimensions:stone_chunk_generator",
     "biome_source": {
-      "type": "mc-dimensions:stone_biome_source"
+      "type": "mc-dimensions:stone_biome_source",
+      "config": {}
     }
   }
 }
-
-
 

@@ -1,0 +1,359 @@
+# Agent Instructions for MC Dimensions Mod
+
+## Project Overview
+
+This is a **Minecraft Fabric mod** for version **1.21.11**. The mod adds custom dimensions with progression-based portals, custom biomes, and chunk generators.
+
+### Key Technologies
+- **Minecraft Version**: 1.21.11
+- **Java Version**: 21 (required)
+- **Build Tool**: Gradle with Fabric Loom
+- **Mod Loader**: Fabric Loader 0.18.3
+- **Fabric API**: 0.140.0+1.21.11
+- **Mappings**: Yarn 1.21.11+build.3
+
+## Critical Build Requirements
+
+### ⚠️ ALWAYS BUILD AFTER CHANGES
+
+**After EVERY code change, you MUST run:**
+```bash
+./gradlew build
+```
+
+If the build fails, **DO NOT proceed** until it succeeds. Fix any compilation errors, linter errors, or build issues immediately.
+
+### ⚠️ CURRENT BUILD STATUS
+
+**Note**: As of the creation of this file, there are existing build errors in the codebase that need to be fixed:
+- Missing/renamed classes: `NoiseConfig`, `NoiseColumn`, `PositionFlag`, `PostDimensionTransition`
+- Missing method implementations: `getSeaLevel()` in chunk generators
+- Incorrect return types: `getBiomes()` should return `Set<RegistryEntry<Biome>>` not `Stream<RegistryKey<Biome>>`
+
+These are likely due to Minecraft 1.21.11 API changes. When fixing these:
+1. **Generate sources first**: Run `./gradlew genSources` to get decompiled Minecraft code with Yarn mappings
+2. **Find correct classes**: Use the "Finding Yarn Mappings" section below to locate correct class names/packages
+3. Use IDE autocomplete or search the generated sources for similar patterns
+4. Refer to Fabric documentation or examples for the current version
+5. Build after each fix to verify
+
+### Build Commands
+
+- **Full build**: `./gradlew build`
+- **Build without tests**: `./gradlew build -x test` (faster for quick checks)
+- **Clean build**: `./gradlew clean build` (when build cache issues occur)
+- **Run client**: `./gradlew runClient` (for testing in-game)
+- **Run server**: `./gradlew runServer` (for server testing)
+
+## Project Structure
+
+### Package Organization
+```
+com.example.mcdimensions/
+├── McDimensions.java          # Main mod entry point
+├── block/                     # Custom blocks (portals, etc.)
+├── dimension/                 # Dimension registration
+├── event/                     # Event handlers
+├── mixin/                     # Mixins for Minecraft internals
+├── portal/                    # Portal logic (frame detection, teleportation)
+└── worldgen/                  # World generation
+    ├── biome/                 # Custom biome sources and configs
+    └── chunk/                 # Custom chunk generators and configs
+```
+
+### Resource Organization
+```
+src/main/resources/
+├── assets/mc-dimensions/      # Client-side resources (models, textures, lang)
+├── data/mc-dimensions/        # Data-driven content (dimensions, biomes)
+├── fabric.mod.json            # Mod metadata (CRITICAL - must be valid)
+└── mc-dimensions.mixins.json  # Mixin configuration
+```
+
+## Code Style and Conventions
+
+### Java Code Style
+- Use **Java 21** features where appropriate
+- Follow standard Java naming conventions:
+  - Classes: `PascalCase` (e.g., `StartBiomeSourceConfig`)
+  - Methods/Variables: `camelCase` (e.g., `registerDimensions()`)
+  - Constants: `UPPER_SNAKE_CASE` (e.g., `MOD_ID`)
+- Package names: `com.example.mcdimensions.*`
+
+### Codec Pattern (for Configs)
+Config classes follow a specific pattern using Mojang's Codec system:
+```java
+public class ExampleConfig {
+    public static final ExampleConfig INSTANCE = new ExampleConfig();
+    public static final Codec<ExampleConfig> CODEC = RecordCodecBuilder.create(instance -> 
+        instance.group(
+            Codec.BOOL.optionalFieldOf("dummy", false).forGetter(config -> false)
+        ).apply(instance, ignored -> INSTANCE)
+    );
+}
+```
+
+### Registration Pattern
+- Use static `register()` methods in registry classes (e.g., `ModDimensions.register()`)
+- Register everything in `McDimensions.onInitialize()`
+
+## Important Development Rules
+
+### 1. Build Validation
+- **MANDATORY**: Run `./gradlew build` after every change
+- Never commit code that doesn't build
+- Fix linter errors immediately
+
+### 2. File Modifications
+- Always read files before editing
+- Preserve existing code style and formatting
+- Maintain consistency with existing patterns
+
+### 3. Resource Files
+- `fabric.mod.json` is critical - any syntax errors will break the mod
+- JSON files must be valid (check syntax)
+- Resource paths must match package structure
+
+### 4. Mixins
+- Mixins are in `com.example.mcdimensions.mixin` package
+- Must be registered in `mc-dimensions.mixins.json`
+- Use `@Mixin` annotation with proper target classes
+- Be careful with mixin targets - they can break with Minecraft updates
+
+### 5. Dimension System
+- Dimensions are registered in `ModDimensions`
+- Each dimension needs:
+  - Dimension type JSON in `data/mc-dimensions/dimension_type/`
+  - Dimension JSON in `data/mc-dimensions/dimension/`
+  - Biome source (in `worldgen/biome/`)
+  - Chunk generator (in `worldgen/chunk/`)
+  - Biome JSON in `data/mc-dimensions/worldgen/biome/`
+
+## Common Patterns
+
+### Creating a New Config Class
+1. Create class in appropriate package (`worldgen/biome/` or `worldgen/chunk/`)
+2. Follow the Codec pattern shown above
+3. Register in the appropriate registry class
+
+### Adding a New Dimension
+1. Create dimension type JSON
+2. Create dimension JSON
+3. Create biome source class and config
+4. Create chunk generator class and config
+5. Create biome JSON
+6. Register in `ModDimensions`
+7. **Build and test**
+
+### Adding a New Block
+1. Create block class in `block/` package
+2. Register in `ModBlocks.register()`
+3. Add blockstate JSON
+4. Add model JSON (if needed)
+5. Add translation in `lang/en_us.json`
+6. **Build and test**
+
+## Testing Workflow
+
+1. **Make changes** to code
+2. **Build**: `./gradlew build` (verify success)
+3. **Test**: `./gradlew runClient` or `runServer`
+4. **Iterate**: Stop game, make changes, rebuild, test again
+
+## Troubleshooting
+
+### Build Fails
+- Check Java version: `java -version` (must be 21)
+- Clean build: `./gradlew clean build`
+- Check for syntax errors in JSON files
+- Verify all imports are correct
+
+### Mod Doesn't Load
+- Verify `fabric.mod.json` is valid JSON
+- Check that entrypoint class exists and implements `ModInitializer`
+- Look at game logs for specific errors
+- Ensure all dependencies are declared
+
+### Linter Errors
+- Fix immediately - don't ignore warnings
+- Use `read_lints` tool to check for errors
+- Common issues: unused imports, missing annotations, type mismatches
+
+## Dependencies
+
+### Required
+- `fabric-loader`: >=0.16.0
+- `fabric-api`: * (current: 0.140.0+1.21.11)
+- `minecraft`: ~1.21.1
+- `java`: >=21
+
+### Version Management
+- Versions are defined in `gradle.properties`
+- Update versions carefully - ensure compatibility
+- Check [Fabric website](https://fabricmc.net/develop) for latest versions
+
+## File Naming Conventions
+
+- Java files: `PascalCase.java`
+- JSON files: `snake_case.json`
+- Resource paths: `snake_case` or `kebab-case`
+
+## Important Notes
+
+1. **Minecraft 1.21.11** - Ensure all code is compatible with this version
+2. **Fabric API** - Many features require Fabric API modules
+3. **Codecs** - World generation configs use Mojang's Codec system for serialization
+4. **Mixin Safety** - Mixins can break with Minecraft updates - test thoroughly
+5. **Resource Pack** - Client-side resources go in `assets/`
+6. **Data Pack** - Server-side data goes in `data/`
+
+## Finding Yarn Mappings (Class Names and Packages)
+
+When the agent needs to find correct class names, packages, or method signatures for Minecraft 1.21.11, use these methods:
+
+### Method 1: Generate Sources Locally (RECOMMENDED)
+Generate decompiled Minecraft sources with Yarn mappings:
+```bash
+./gradlew genSources
+```
+This will:
+- Download and decompile Minecraft with Yarn mappings
+- Place sources in `build/generated/sources/` or `build/loom-cache/remapped_working/`
+- Make Minecraft classes accessible via file system tools
+
+**For the Agent**: After generating sources, use these tools to access them:
+- `grep` - Search for class/interface names in `build/` directory
+- `read_file` - Read specific `.java` files once found
+- `glob_file_search` - Find files by name pattern (e.g., `**/NoiseConfig.java`)
+- `list_dir` - Browse directory structure to find packages
+
+**For Human Developers**: After generating sources:
+- Use IDE "Go to Definition" (F12) on any Minecraft class
+- Search for classes using IDE search (Ctrl+Shift+F / Cmd+Shift+F)
+- Browse packages in the generated sources directory
+
+### Method 2: Online Yarn Mapping Browsers
+- **Yarn Mappings Repository**: https://github.com/FabricMC/yarn
+  - Browse by version: `https://github.com/FabricMC/yarn/tree/1.21.11+build.3`
+  - Search for classes in the repository
+- **Maven Repository**: https://maven.fabricmc.net/net/fabricmc/yarn/
+  - Direct access to mapping files
+- **Mapping Tools**: Some community tools may provide web interfaces
+
+### Method 3: Use IDE Autocomplete
+After running `./gradlew genSources`:
+1. Type `net.minecraft.` and use autocomplete to see available packages
+2. Use "Go to Definition" on existing Minecraft imports in the codebase
+3. Search for similar classes (e.g., if looking for `NoiseConfig`, search for "Noise" in Minecraft packages)
+
+### Method 4: Check Existing Code
+- Look at existing imports in the codebase for patterns
+- Check Fabric API source code (if available) for examples
+- Look at similar mods or Fabric examples for the same Minecraft version
+
+### Method 5: Agent Access to Generated Sources
+**IMPORTANT**: The agent CAN access generated sources using these tools:
+
+After running `./gradlew genSources`, the agent should:
+
+1. **Use `grep` tool** to search for class names in generated sources:
+   - Search pattern: `class NoiseConfig` or `interface NoiseConfig`
+   - Search path: `build/generated/sources/` or `build/loom-cache/`
+   - Example: `grep -r "class NoiseConfig" build/`
+
+2. **Use `read_file` tool** to read specific files:
+   - First find the file path using `grep` or `glob_file_search`
+   - Then read it: `read_file("build/generated/sources/.../NoiseConfig.java")`
+
+3. **Use `glob_file_search`** to find files by name pattern:
+   - Pattern: `**/NoiseConfig.java` in `build/` directory
+   - This will find the file even if you don't know the exact path
+
+4. **Use `list_dir`** to browse generated source directories:
+   - Browse: `build/generated/sources/` to see structure
+   - Navigate to `net/minecraft/` packages to find classes
+
+5. **Use `codebase_search`** (may work, but build/ is often excluded):
+   - Try semantic search for concepts like "noise configuration" or "chunk generation"
+
+**Typical locations for generated sources:**
+- `build/generated/sources/` - Main generated sources
+- `build/loom-cache/remapped_working/` - Loom's remapped sources
+- Look for `net.minecraft.*` packages in these directories
+
+### When Agent Needs Mappings
+If the agent encounters "cannot find symbol" errors, follow this workflow:
+
+**Step-by-step process for the agent:**
+
+1. **First, check existing code in the project** (MOST RELIABLE):
+   - Use `grep` to search for the class name in `src/` directory
+   - Look for fully qualified names (e.g., `net.minecraft.world.gen.noise.NoiseConfig`)
+   - Example: `grep -r "NoiseConfig" src/`
+   - This will show you how the class is already being used in the codebase
+
+2. **Check working imports**:
+   - Use `grep` to find similar imports: `grep -r "^import net.minecraft" src/`
+   - Look at files that extend similar classes (e.g., other ChunkGenerator implementations)
+   - Use `codebase_search` to find similar patterns
+
+3. **If not found in src/, search build/ directory**:
+   - Note: Generated sources may be in JAR files, not individual .java files
+   - Try: `grep -r "NoiseConfig" build/` (searches in JARs too)
+   - Or: `grep -r "class.*NoiseConfig" build/`
+
+4. **Use glob_file_search** to find source files:
+   - Pattern: `**/NoiseConfig.java` in `build/` directory
+   - May not find anything if sources are in JARs
+
+5. **If still not found, check online**:
+   - Yarn repository: https://github.com/FabricMC/yarn/tree/1.21.11+build.3
+   - Search for the class name in the repository
+
+**Example**: Finding `NoiseConfig`:
+1. First: `grep -r "NoiseConfig" src/` → Found in `StartChunkGenerator.java` as `net.minecraft.world.gen.noise.NoiseConfig`
+2. Check the file: `read_file("src/main/java/.../StartChunkGenerator.java")`
+3. See it's used with fully qualified name: `net.minecraft.world.gen.noise.NoiseConfig`
+4. Add the import: `import net.minecraft.world.gen.noise.NoiseConfig;`
+
+**Important**: Always check existing code first - it's the most reliable source!
+
+### Current Yarn Version
+- **Version**: `1.21.11+build.3` (defined in `gradle.properties`)
+- **Maven Coordinates**: `net.fabricmc:yarn:1.21.11+build.3:v2`
+
+## Quick Reference
+
+### Build Status Check
+```bash
+./gradlew build
+```
+
+### View Dependencies
+```bash
+./gradlew dependencies
+```
+
+### Generate IDE Files
+```bash
+./gradlew vscode
+```
+
+### Validate Access Widener
+```bash
+./gradlew validateAccessWidener
+```
+
+## When Making Changes
+
+1. **Read** the relevant files first
+2. **Understand** the existing patterns
+3. **Make** the change following conventions
+4. **Build** immediately: `./gradlew build`
+5. **Fix** any errors before proceeding
+6. **Test** if possible with `runClient` or `runServer`
+
+---
+
+**Remember**: This is a Minecraft mod - changes can affect gameplay. Always build and test thoroughly!
+

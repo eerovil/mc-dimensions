@@ -35,10 +35,27 @@
       "minecraft:ore_diamond_large",
       "minecraft:ore_diamond_buried",
       "minecraft:ore_lapis",
-      "minecraft:ore_lapis_buried"
+      "minecraft:ore_lapis_buried",
+      "minecraft:ore_copper",
+      "minecraft:underwater_magma",
+      "minecraft:disk_sand",
+      "minecraft:disk_clay",
+      "minecraft:disk_gravel"
     ]
-  ]
+  ],
+  "surface_builder": {
+    "config": {
+      "top_material": {
+        "Name": "minecraft:grass_block"
+      },
+      "under_material": {
+        "Name": "minecraft:dirt"
+      },
+      "underwater_material": {
+        "Name": "minecraft:dirt"
+      }
+    },
+    "type": "minecraft:default"
+  }
 }
-
-
 

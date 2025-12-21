@@ -38,39 +38,42 @@ public class StoneChunkGenerator extends ChunkGenerator {
         return -64;
     }
 
-    public void buildSurface(ChunkRegion region, StructureAccessor structures, Chunk chunk) {
-        BlockPos.Mutable mutable = new BlockPos.Mutable();
-        int minY = region.getBottomY();
-        int maxY = 320; // Max build height
-        
-        // Build surface with grass on top
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                int surfaceHeight = 64 + (int)(Math.sin(x * 0.1) * 5) + (int)(Math.cos(z * 0.1) * 5);
-                surfaceHeight = Math.max(minY, Math.min(maxY, surfaceHeight));
-                
-                if (surfaceHeight >= minY && surfaceHeight <= maxY) {
-                    mutable.set(x, surfaceHeight, z);
-                    chunk.setBlockState(mutable, Blocks.GRASS_BLOCK.getDefaultState(), 0);
-                    if (surfaceHeight - 1 >= minY) {
-                        mutable.setY(surfaceHeight - 1);
-                        chunk.setBlockState(mutable, Blocks.DIRT.getDefaultState(), 0);
-                    }
-                }
-            }
-        }
+    @Override
+    public int getWorldHeight() {
+        return 384;
     }
 
-    public void generateTerrain(ChunkRegion region, StructureAccessor structures, Chunk chunk) {
+    @Override
+    public int getSeaLevel() {
+        return 63;
+    }
+
+    @Override
+    public void buildSurface(ChunkRegion region, StructureAccessor structures, net.minecraft.world.gen.noise.NoiseConfig noiseConfig, Chunk chunk) {
+        // Surface is already set from populateNoise
+    }
+
+    @Override
+    public int getHeight(int x, int z, Heightmap.Type heightmap, HeightLimitView world, net.minecraft.world.gen.noise.NoiseConfig noiseConfig) {
+        return 64 + (int)(Math.sin(x * 0.1) * 5) + (int)(Math.cos(z * 0.1) * 5);
+    }
+
+    @Override
+    public java.util.concurrent.CompletableFuture<Chunk> populateNoise(Blender blender, net.minecraft.world.gen.noise.NoiseConfig noiseConfig, StructureAccessor structureAccessor, Chunk chunk) {
+        // Generate terrain: normal overworld-like with stone and basic ores
+        // Ores will be generated via biome features
         BlockPos.Mutable mutable = new BlockPos.Mutable();
-        int minY = region.getBottomY();
-        int maxY = 320; // Max build height
+        int minY = chunk.getBottomY();
+        int chunkX = chunk.getPos().getStartX();
+        int chunkZ = chunk.getPos().getStartZ();
         
         // Generate terrain with stone underground
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                int surfaceHeight = 64 + (int)(Math.sin(x * 0.1) * 5) + (int)(Math.cos(z * 0.1) * 5);
-                surfaceHeight = Math.max(minY, Math.min(maxY, surfaceHeight));
+                int worldX = chunkX + x;
+                int worldZ = chunkZ + z;
+                int surfaceHeight = 64 + (int)(Math.sin(worldX * 0.1) * 5) + (int)(Math.cos(worldZ * 0.1) * 5);
+                surfaceHeight = Math.max(minY, Math.min(320, surfaceHeight));
                 
                 for (int y = minY; y <= surfaceHeight; y++) {
                     mutable.set(x, y, z);
@@ -87,10 +90,13 @@ public class StoneChunkGenerator extends ChunkGenerator {
                 }
             }
         }
+        
+        return java.util.concurrent.CompletableFuture.completedFuture(chunk);
     }
 
-    public int getHeight(int x, int z, Heightmap.Type heightmap, HeightLimitView world, Object noiseConfig) {
-        return 64 + (int)(Math.sin(x * 0.1) * 5) + (int)(Math.cos(z * 0.1) * 5);
+    @Override
+    public void carve(ChunkRegion region, long seed, net.minecraft.world.gen.noise.NoiseConfig noiseConfig, net.minecraft.world.biome.source.BiomeAccess biomeAccess, StructureAccessor structureAccessor, Chunk chunk) {
+        // Disable caves and ravines
     }
 
     @Override
@@ -99,13 +105,13 @@ public class StoneChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void appendDebugHudText(java.util.List<String> text, Object noiseConfig, BlockPos pos) {
+    public void appendDebugHudText(java.util.List<String> text, net.minecraft.world.gen.noise.NoiseConfig noiseConfig, BlockPos pos) {
         // No debug info
     }
-
+    
     @Override
-    public Object getColumnSample(int x, int z, HeightLimitView heightLimitView, Object noiseConfig) {
-        return null; // Placeholder - will need proper implementation
+    public net.minecraft.world.gen.chunk.VerticalBlockSample getColumnSample(int x, int z, HeightLimitView heightLimitView, net.minecraft.world.gen.noise.NoiseConfig noiseConfig) {
+        return new net.minecraft.world.gen.chunk.VerticalBlockSample(heightLimitView.getBottomY(), new net.minecraft.block.BlockState[0]);
     }
 }
 
