@@ -28,7 +28,6 @@
 				"java.compile.nullAnalysis.mode": "automatic",
 				"files.exclude": {
 					"**/.gradle": true,
-					"**/build": true,
 					"**/.classpath": true,
 					"**/.project": true,
 					"**/.settings": true
