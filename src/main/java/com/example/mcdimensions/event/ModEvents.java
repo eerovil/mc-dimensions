@@ -9,6 +9,7 @@ import com.example.mcdimensions.worldgen.biome.StoneBiomeSource;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -107,9 +108,18 @@ public class ModEvents {
         // Listen for block break events - when a block is broken, check adjacent blocks
         PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
             if (!world.isClient()) {
-                // When a block is broken, check adjacent blocks for portal frames
-                for (net.minecraft.util.math.Direction dir : net.minecraft.util.math.Direction.values()) {
-                    schedulePortalCheck(world, pos.offset(dir));
+                // Only check for portal frames if the broken block could be part of a frame or portal
+                Block block = state.getBlock();
+                boolean isRelevantBlock = block == com.example.mcdimensions.block.ModBlocks.CUSTOM_PORTAL ||
+                    block == net.minecraft.block.Blocks.STONE || block == net.minecraft.block.Blocks.COBBLESTONE ||
+                    block == net.minecraft.block.Blocks.DIRT || block == net.minecraft.block.Blocks.GRASS_BLOCK ||
+                    state.isIn(net.minecraft.registry.tag.BlockTags.LOGS) || state.isIn(net.minecraft.registry.tag.BlockTags.PLANKS);
+                
+                if (isRelevantBlock) {
+                    // When a relevant block is broken, check adjacent blocks for portal frames
+                    for (net.minecraft.util.math.Direction dir : net.minecraft.util.math.Direction.values()) {
+                        schedulePortalCheck(world, pos.offset(dir));
+                    }
                 }
             }
         });
@@ -124,12 +134,24 @@ public class ModEvents {
                 return;
             }
             
+            // Limit how many blocks we check per tick to prevent lag spikes
+            int maxChecksPerTick = 10;
+            int checked = 0;
+            
             // Check blocks that were recently added to the check list
             Set<BlockPos> toRemove = new HashSet<>();
             for (BlockPos pos : blocksToCheck) {
+                if (checked >= maxChecksPerTick) {
+                    break; // Stop checking for this tick
+                }
+                
                 if (world.isChunkLoaded(pos)) {
                     BlockState state = world.getBlockState(pos);
                     PortalFrameDetector.checkAndCreatePortal(world, pos, state);
+                    toRemove.add(pos);
+                    checked++;
+                } else {
+                    // Remove unloaded chunks from the check list
                     toRemove.add(pos);
                 }
             }
@@ -139,7 +161,10 @@ public class ModEvents {
     
     public static void schedulePortalCheck(World world, BlockPos pos) {
         if (!world.isClient()) {
-            blocksToCheck.add(pos.toImmutable());
+            // Limit the size of the check queue to prevent memory issues
+            if (blocksToCheck.size() < 1000) {
+                blocksToCheck.add(pos.toImmutable());
+            }
         }
     }
 }

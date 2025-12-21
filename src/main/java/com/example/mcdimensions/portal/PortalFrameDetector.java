@@ -82,14 +82,19 @@ public class PortalFrameDetector {
         // Find the bottom-left corner of potential frame
         BlockPos.Mutable corner = pos.mutableCopy();
         
-        // Move to bottom
-        while (isFrameBlock(world, corner.down(), frameType)) {
+        // Move to bottom (with maximum search distance to prevent infinite loops)
+        int downMoves = 0;
+        int maxSearchDistance = MAX_PORTAL_SIZE * 2; // Reasonable limit
+        while (downMoves < maxSearchDistance && isFrameBlock(world, corner.down(), frameType)) {
             corner.move(Direction.DOWN);
+            downMoves++;
         }
         
-        // Move to left (negative horizontal)
-        while (isFrameBlock(world, corner.offset(horizontal.getOpposite()), frameType)) {
+        // Move to left (negative horizontal) (with maximum search distance)
+        int leftMoves = 0;
+        while (leftMoves < maxSearchDistance && isFrameBlock(world, corner.offset(horizontal.getOpposite()), frameType)) {
             corner.move(horizontal.getOpposite());
+            leftMoves++;
         }
 
         // Check if this is a valid frame starting point
@@ -171,7 +176,10 @@ public class PortalFrameDetector {
         int count = 0;
         BlockPos.Mutable pos = start.mutableCopy();
         
-        while (isFrameBlock(world, pos, frameType)) {
+        // Add maximum limit to prevent infinite loops on large structures
+        int maxMeasure = MAX_PORTAL_SIZE * 2; // Allow some extra for finding frame boundaries
+        
+        while (count < maxMeasure && isFrameBlock(world, pos, frameType)) {
             count++;
             pos.move(direction);
         }
@@ -181,6 +189,11 @@ public class PortalFrameDetector {
 
 
     private static boolean isFrameBlock(World world, BlockPos pos, FrameType frameType) {
+        // Check if chunk is loaded to avoid loading chunks during portal detection
+        if (!world.isChunkLoaded(pos)) {
+            return false;
+        }
+        
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         
