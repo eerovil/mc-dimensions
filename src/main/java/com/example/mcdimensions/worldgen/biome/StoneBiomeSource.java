@@ -3,10 +3,10 @@ package com.example.mcdimensions.worldgen.biome;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.example.mcdimensions.McDimensions;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeSource;
@@ -27,11 +27,11 @@ public class StoneBiomeSource extends BiomeSource {
             Identifier.of(McDimensions.MOD_ID, "stone_biome")
     );
     
-    private final RegistryEntry<Biome> biomeEntry;
+    private RegistryEntry<Biome> biomeEntry;
 
     public StoneBiomeSource(StoneBiomeSourceConfig config) {
         super();
-        this.biomeEntry = null;
+        this.biomeEntry = null; // Will be resolved lazily
     }
     
     public StoneBiomeSource(RegistryEntry<Biome> biomeEntry) {
@@ -56,7 +56,23 @@ public class StoneBiomeSource extends BiomeSource {
 
     @Override
     public RegistryEntry<Biome> getBiome(int x, int y, int z, MultiNoiseUtil.MultiNoiseSampler noise) {
+        // For single-biome dimensions, always return the same biome
+        if (biomeEntry == null) {
+            throw new IllegalStateException("Biome entry for " + STONE_BIOME.getValue() + " is null. Make sure the biome is registered.");
+        }
         return biomeEntry;
+    }
+    
+    // Method to resolve biome entry from registry - should be called when world is created
+    public void resolveBiomeEntry(net.minecraft.registry.Registry<Biome> registry) {
+        if (biomeEntry == null) {
+            try {
+                var entry = registry.getOrThrow(STONE_BIOME);
+                biomeEntry = (RegistryEntry<Biome>) entry;
+            } catch (Exception e) {
+                McDimensions.LOGGER.error("Failed to resolve biome entry for {}", STONE_BIOME.getValue(), e);
+            }
+        }
     }
 }
 

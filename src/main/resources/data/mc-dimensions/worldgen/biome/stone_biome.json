@@ -19,7 +19,7 @@
     "misc": []
   },
   "spawn_costs": {},
-  "carvers": {},
+  "carvers": [],
   "features": [
     [
       "minecraft:ore_coal_upper",
@@ -42,21 +42,7 @@
       "minecraft:disk_clay",
       "minecraft:disk_gravel"
     ]
-  ],
-  "surface_builder": {
-    "config": {
-      "top_material": {
-        "Name": "minecraft:grass_block"
-      },
-      "under_material": {
-        "Name": "minecraft:dirt"
-      },
-      "underwater_material": {
-        "Name": "minecraft:dirt"
-      }
-    },
-    "type": "minecraft:default"
-  }
+  ]
 }
 
 

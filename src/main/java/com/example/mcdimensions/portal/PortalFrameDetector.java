@@ -43,12 +43,18 @@ public class PortalFrameDetector {
     private static FrameType getFrameType(BlockState block) {
         Block blockType = block.getBlock();
         
-        // Dirt frame -> forest dimension
+        // Stone/Cobblestone frame -> start dimension (first dimension, dirt only)
+        // This allows access from overworld to the progression start
+        if (blockType == Blocks.STONE || blockType == Blocks.COBBLESTONE) {
+            return new FrameType(ModDimensions.START_DIMENSION, blockType);
+        }
+        
+        // Dirt frame -> forest dimension (second dimension, dirt + grass + trees)
         if (blockType == Blocks.DIRT || blockType == Blocks.GRASS_BLOCK) {
             return new FrameType(ModDimensions.FOREST_DIMENSION, blockType);
         }
         
-        // Wood frame (logs or planks) -> stone dimension
+        // Wood frame (logs or planks) -> stone dimension (third dimension, normal with stone/ores)
         if (block.isIn(BlockTags.LOGS) || block.isIn(BlockTags.PLANKS)) {
             return new FrameType(ModDimensions.STONE_DIMENSION, blockType);
         }
@@ -178,6 +184,11 @@ public class PortalFrameDetector {
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         
+        // For stone/cobblestone frames, accept stone or cobblestone
+        if (frameType.frameBlock == Blocks.STONE || frameType.frameBlock == Blocks.COBBLESTONE) {
+            return block == Blocks.STONE || block == Blocks.COBBLESTONE;
+        }
+        
         // For dirt frames, accept dirt or grass
         if (frameType.frameBlock == Blocks.DIRT || frameType.frameBlock == Blocks.GRASS_BLOCK) {
             return block == Blocks.DIRT || block == Blocks.GRASS_BLOCK;
@@ -242,8 +253,11 @@ public class PortalFrameDetector {
         for (Direction dir : Direction.values()) {
             BlockPos framePos = portalPos.offset(dir);
             BlockState state = world.getBlockState(framePos);
+            Block block = state.getBlock();
             
-            if (state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.GRASS_BLOCK ||
+            // Check for all valid frame types
+            if (block == Blocks.STONE || block == Blocks.COBBLESTONE ||
+                block == Blocks.DIRT || block == Blocks.GRASS_BLOCK ||
                 state.isIn(BlockTags.LOGS) || state.isIn(BlockTags.PLANKS)) {
                 return true;
             }

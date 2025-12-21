@@ -30,6 +30,16 @@ loom {
             sourceSet(sourceSets.main)
         }
     }
+    
+    fabricApi {
+        configureTests {
+            createSourceSet = true
+            modId = "mc-dimensions-test"
+            enableGameTests = true
+            enableClientGameTests = false
+            eula = true
+        }
+    }
 }
 
 dependencies {

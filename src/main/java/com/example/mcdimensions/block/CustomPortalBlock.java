@@ -6,9 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -18,8 +15,8 @@ import net.minecraft.world.World;
 public class CustomPortalBlock extends Block {
     private static final VoxelShape SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 16.0, 16.0);
 
-    public CustomPortalBlock() {
-        super(Settings.create().noCollision().strength(-1.0F).dropsNothing());
+    public CustomPortalBlock(Settings settings) {
+        super(settings);
     }
 
     @Override

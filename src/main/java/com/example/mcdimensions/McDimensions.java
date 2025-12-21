@@ -1,9 +1,11 @@
 package com.example.mcdimensions;
 
 import com.example.mcdimensions.block.ModBlocks;
+import com.example.mcdimensions.command.ModCommands;
 import com.example.mcdimensions.dimension.ModDimensions;
 import com.example.mcdimensions.event.ModEvents;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +25,9 @@ public class McDimensions implements ModInitializer {
         
         // Register events
         ModEvents.register();
+        
+        // Register commands
+        CommandRegistrationCallback.EVENT.register(ModCommands::register);
         
         LOGGER.info("MC Dimensions mod initialized");
     }

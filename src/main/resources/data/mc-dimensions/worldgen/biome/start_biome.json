@@ -19,22 +19,8 @@
     "misc": []
   },
   "spawn_costs": {},
-  "carvers": {},
-  "features": [],
-  "surface_builder": {
-    "config": {
-      "top_material": {
-        "Name": "minecraft:dirt"
-      },
-      "under_material": {
-        "Name": "minecraft:dirt"
-      },
-      "underwater_material": {
-        "Name": "minecraft:dirt"
-      }
-    },
-    "type": "minecraft:default"
-  }
+  "carvers": [],
+  "features": []
 }
 
 

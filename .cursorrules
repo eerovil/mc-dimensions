@@ -327,6 +327,7 @@ If the agent encounters "cannot find symbol" errors, follow this workflow:
 ### Build Status Check
 ```bash
 ./gradlew build
+rm -f run/world/session.lock 2>/dev/null; PID=$(lsof -ti :25565 2>/dev/null); if [ ! -z \"$PID\" ]; then kill -9 $PID 2>/dev/null; sleep 1; fi; ./gradlew runServer
 ```
 
 ### View Dependencies
